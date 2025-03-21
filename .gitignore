@@ -1,0 +1,19 @@
+# Visual Studio temporary files
+bin/
+obj/
+*.user
+*.suo
+*.cache
+.vs/
+
+# Build outputs
+*.dll
+*.exe
+*.pdb
+
+# NuGet
+packages/
+*.nupkg
+
+# User-specific files
+*.csproj.user
