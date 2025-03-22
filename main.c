@@ -6,6 +6,9 @@
 #define FILENAME "contacts.txt"
 #define BUFFER_SIZE 512
 #define MAX_STRING_LENGTH 128
+#define FORMAT_MIN_LENTH 20
+#define VERTICAL_BARS_IN_TABLE 4
+#define LIST_PADDING 4
 
 typedef struct Contact{
 	char* name;
@@ -21,7 +24,8 @@ bool add_node_sort(Contact** head, Contact** tail, char* name, char* phone, char
 bool add_contact(Contact* contacts);
 bool delete_contact(Contact* contacts);
 bool search_contacts(Contact* contacts);
-bool list_contacts(Contact* contacts);
+void list_contacts(Contact* contacts);
+void print_line(int len);
 bool edit_contact(Contact* contacts);
 bool save_file(Contact* contacts);
 bool free_memory(Contact* contacts);
@@ -33,12 +37,6 @@ int main(void)
 		   "---------------\n");
 	Contact* contacts = NULL;
 	load_file(&contacts);
-	Contact* ptr = contacts;
-	while (ptr != NULL)
-	{
-		printf("%s\n%s\n%s\n", ptr->name, ptr->phone, ptr->email);
-		ptr = ptr->next;
-	}
 	while (true)
 	{
 		printf("1. Add contact\n"
@@ -117,6 +115,10 @@ bool load_file(Contact** contacts)
 		index = extract_string(buffer_email, buffer, index);
 		add_node_sort(contacts, &tail, buffer_name, buffer_phone, buffer_email);
 	}
+	free(buffer);
+	free(buffer_name);
+	free(buffer_phone);
+	free(buffer_email);
 	fclose(input_file);
 	return true;
 }
@@ -226,9 +228,42 @@ bool search_contacts(Contact* contacts)
 	return true;
 }
 
-bool list_contacts(Contact* contacts)
+void list_contacts(Contact* contacts)
 {
-	return true;
+	int name_max, phone_max, email_max;
+	name_max = phone_max = email_max = FORMAT_MIN_LENTH;
+
+	for (Contact* ptr = contacts; ptr != NULL; ptr = ptr->next)
+	{
+		int name_len = strlen(ptr->name);
+		int phone_len = strlen(ptr->phone);
+		int email_len = strlen(ptr->email);
+		if (name_len > name_max)
+			name_max = name_len;
+		if (phone_len > phone_max)
+			phone_max = phone_len;
+		if (email_len > email_max)
+			email_max = email_len;
+	}
+	name_max += LIST_PADDING;
+	phone_max += LIST_PADDING;
+	email_max += LIST_PADDING;
+	int line_lenth = name_max + phone_max + email_max + VERTICAL_BARS_IN_TABLE;
+	print_line(line_lenth + VERTICAL_BARS_IN_TABLE);
+	printf("| %-*s| %-*s| %-*s|\n", name_max, "Name", phone_max, "Phone", email_max, "Email");
+	print_line(line_lenth + VERTICAL_BARS_IN_TABLE);
+	for (Contact* ptr = contacts; ptr != NULL; ptr = ptr->next)
+	{
+		printf("| %-*s| %-*s| %-*s|\n", name_max, ptr->name, phone_max, ptr->phone, email_max, ptr->email);
+	}
+	print_line(line_lenth + VERTICAL_BARS_IN_TABLE);
+}
+
+void print_line(int len)
+{
+	for (int i = 0; i < len; i++)
+		printf("-");
+	printf("\n");
 }
 
 bool edit_contact(Contact* contacts)
