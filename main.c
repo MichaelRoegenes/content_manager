@@ -311,11 +311,33 @@ bool delete_contact(Contact* contacts)
 {
 	return true;
 }
-
 bool search_contacts(Contact* contacts)
 {
+	char query[MAX_STRING_LENGTH];
+	clear_input_buffer();
+	
+	get_input(query, "Name: ");
 
-	return true;
+	for (Contact* ptr = contacts; ptr != NULL; ptr = ptr->next)
+	{
+		if (strcasecmp(ptr->name, query) == 0)
+		{
+			int name_len = FORMAT_MIN_LENTH;
+			int phone_len = FORMAT_MIN_LENTH;
+			int email_len = FORMAT_MIN_LENTH;
+			name_len = strlen(ptr->name);
+			phone_len = strlen(ptr->phone);
+			email_len = strlen(ptr->email);
+			name_len += LIST_PADDING;
+			phone_len += LIST_PADDING;
+			email_len += LIST_PADDING;
+			int line_len = print_table_header(name_len, phone_len, email_len);
+			print_contact(ptr, name_len, phone_len, email_len);
+			print_line(line_len);
+			return true;
+		}
+	}
+	return false;
 }
 
 // Displays a formatted table of contacts from a linked list
