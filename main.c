@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+
 #define FILENAME "contacts.txt"
 #define BUFFER_SIZE 512
 #define MAX_STRING_LENGTH 128
@@ -354,10 +355,27 @@ bool edit_contact(Contact* contacts)
 
 bool save_file(Contact* contacts)
 {
+	FILE* output_file = fopen(FILENAME, "w");
+	if (output_file == NULL)
+	{
+		return false;
+	}
+	for (Contact* ptr = contacts; ptr != NULL; ptr = ptr->next)
+	{
+		fprintf(output_file, "%s\t%s\t%s\n", ptr->name, ptr->phone, ptr->email);
+	}
+	fclose(output_file);
 	return true;
 }
 
 bool free_memory(Contact* contacts)
 {
-	return true;
+	Contact* ptr = contacts;
+	Contact* tmp = contacts;
+	while (ptr != NULL)
+	{
+		tmp = ptr;
+		ptr = ptr->next;
+		free(tmp);
+	}
 }
