@@ -42,9 +42,8 @@ const Contact header = { "Name", "Phone", "Email", NULL, NULL};
 int main(void)
 {
 	// Display program title with decorative borders
-	printf("---------------\n"
-		   "Content Manager\n"
-		   "---------------\n");
+	printf("------------------------\n"
+		   "|  Content Manager     |\n");
 	// Initialize an empty linked list of contacts
 	Contact* contacts_head = NULL;
 	Contact* contacts_tail = contacts_head;
@@ -55,12 +54,16 @@ int main(void)
 	while (true)
 	{
 		// Display menu options for user selection
-		printf("1. Add contact\n"
-			   "2. Delete contact\n"
-			   "3. Search contact\n"
-			   "4. List all contacts\n"
-			   "5. Edit contact\n"
-			   "6. Exit\n"
+		printf("------------------------\n"
+			   "|      Main Menu       |\n"
+			   "------------------------\n"
+			   "| 1. Add contact       |\n"
+			   "| 2. Delete contact    |\n"
+			   "| 3. Search contact    |\n"
+			   "| 4. List all contacts |\n"
+			   "| 5. Edit contact      |\n"
+			   "| 6. Exit              |\n"
+			   "------------------------\n"
 			   "Enter your choice: ");
 
 		// Variable to store user's menu choice
