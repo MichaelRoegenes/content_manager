@@ -20,10 +20,12 @@ typedef struct Contact{
 	struct Contact *prev;
 } Contact;
 
-bool load_file(Contact** contacts);
+bool load_file(Contact** head, Contact** tail);
 int extract_string(char* output, char* input, int index);
 bool add_node_sort(Contact** head, Contact** tail, char* name, char* phone, char* email);
-bool add_contact(Contact* contacts);
+bool add_contact(Contact** head, Contact** tail);
+void clear_input_buffer(void);
+bool get_input(char* str, char* prompt);
 bool delete_contact(Contact* contacts);
 bool search_contacts(Contact* contacts);
 void list_contacts(Contact* contacts);
@@ -44,9 +46,10 @@ int main(void)
 		   "Content Manager\n"
 		   "---------------\n");
 	// Initialize an empty linked list of contacts
-	Contact* contacts = NULL;
+	Contact* contacts_head = NULL;
+	Contact* contacts_tail = contacts_head;
 	// Load existing contacts from a file into the list
-	load_file(&contacts);
+	load_file(&contacts_head, &contacts_tail);
 	
 	// Main program loop for user interaction 
 	while (true)
@@ -63,31 +66,31 @@ int main(void)
 		// Variable to store user's menu choice
 		int menu_selection = 0;
 		// Wait for valid input (characters '1' to '6')
-		while ((menu_selection = getchar()) < '1' || menu_selection > '6')
-			; // Empty loop body; continues until valid input is received
+		while ((menu_selection = getchar()) < '1' || menu_selection > '6'); 
+		// Empty loop body; continues until valid input is received
 		
 		// Execute corresponding action based on user selection
 		if (menu_selection == '1')
 			// Add a new contact to the list
-			add_contact(contacts);
+			add_contact(&contacts_head, &contacts_tail);
 		else if (menu_selection == '2')
 			// Remove a contact from the list
-			delete_contact(contacts);
+			delete_contact(contacts_head);
 		else if (menu_selection == '3')
 			// Search for a contact in the list
-			search_contacts(contacts);
+			search_contacts(contacts_head);
 		else if (menu_selection == '4')
 			// Display all contacts in a formatted table
-			list_contacts(contacts);
+			list_contacts(contacts_head);
 		else if (menu_selection == '5')
-			// Modify an existing contacts's details
-			edit_contact(contacts);
+			// Modify an existing contacts' details
+			edit_contact(contacts_head);
 		else
 		{
 			// Save contacts to file before exiting
-			save_file(contacts);
+			save_file(contacts_head);
 			// Free allocated memory to prevent leaks
-			free_memory(contacts);
+			free_memory(contacts_head);
 			// Exit the program successfully
 			return 0;
 		}
@@ -95,7 +98,7 @@ int main(void)
 }
 
 // Loads contact data from a file into a sorted linked list
-bool load_file(Contact** contacts)
+bool load_file(Contact** head, Contact** tail)
 {
 	// Open the file for reading
 	FILE* input_file = fopen(FILENAME, "r");
@@ -136,8 +139,6 @@ bool load_file(Contact** contacts)
 		free(buffer_phone);
 		return false;
 	}
-	// Track the tail of the list for efficient insertion
-	Contact* tail = NULL;
 	// Read the file line by line
 	while (fgets(buffer, BUFFER_SIZE, input_file) != NULL)
 	{
@@ -147,7 +148,7 @@ bool load_file(Contact** contacts)
 		index = extract_string(buffer_phone, buffer, index);
 		index = extract_string(buffer_email, buffer, index);
 		// Add extracted data as a new sorted node in the list
-		add_node_sort(contacts, &tail, buffer_name, buffer_phone, buffer_email);
+		add_node_sort(head, tail, buffer_name, buffer_phone, buffer_email);
 	}
 	// Clean up allocated memory and close the file
 	free(buffer);
@@ -262,8 +263,47 @@ bool add_node_sort(Contact** head, Contact** tail, char* name, char* phone, char
 	return false;
 }
 
-bool add_contact(Contact* contacts)
+// Adds a new contact to a sorted linked list
+bool add_contact(Contact** head, Contact** tail)
 {
+	// Initialize temporary storage
+	char buffer_name[MAX_STRING_LENGTH];
+	char buffer_phone[MAX_STRING_LENGTH];
+	char buffer_email[MAX_STRING_LENGTH];
+
+	// Clear any remaining input
+	clear_input_buffer();
+
+	// Prompt and store input
+	get_input(buffer_name, "Name: ");
+	get_input(buffer_phone, "Phone: ");
+	get_input(buffer_email, "Email: ");
+	
+	// Add new contact in sorted position
+	add_node_sort(head, tail, buffer_name, buffer_phone, buffer_email);
+	return true;
+}
+
+// Clears the input buffer of any remaining characters
+void clear_input_buffer(void)
+{
+	int c;
+	while ((c = getchar()) != '\n' && c != EOF);
+}
+
+// Gets user input and stores it in the provided string
+bool get_input(char* str, char* prompt)
+{
+	printf("%s", prompt);
+	if (fgets(str, sizeof(char) * MAX_STRING_LENGTH, stdin) != NULL)
+	{
+		// Check for length and remove trailing newline if present
+		int len = strlen(str);
+		if (len > 0 && str[len - 1] == '\n')
+		{
+			str[len - 1] = '\0';
+		}
+	}
 	return true;
 }
 
@@ -376,6 +416,9 @@ bool free_memory(Contact* contacts)
 	{
 		tmp = ptr;
 		ptr = ptr->next;
+		free(tmp->name);
+		free(tmp->phone);
+		free(tmp->email);
 		free(tmp);
 	}
 }
