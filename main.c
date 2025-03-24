@@ -7,10 +7,8 @@
 #define FILENAME "contacts.txt"
 #define BUFFER_SIZE 512
 #define MAX_STRING_LENGTH 128
-#define FORMAT_MIN_LENTH 20
-#define SPACES_IN_TABLE 3
+#define SPACES_IN_TABLE 12
 #define VERTICAL_BARS_IN_TABLE 4
-#define LIST_PADDING 4
 
 typedef struct Contact{
 	char* name;
@@ -28,15 +26,15 @@ void clear_input_buffer(void);
 bool get_input(char* str, char* prompt);
 bool delete_contact(Contact* contacts);
 bool search_contacts(Contact* contacts);
+bool search_list(Contact* contacts, char* query);
 void list_contacts(Contact* contacts);
+void print_single_contact(Contact* contact);
 void print_line(int len);
 void print_contact(Contact* ptr, int name_len, int phone_len, int email_len);
 int print_table_header(int name_len, int phone_len, int email_len);
 bool edit_contact(Contact* contacts);
 bool save_file(Contact* contacts);
 bool free_memory(Contact* contacts);
-
-const Contact header = { "Name", "Phone", "Email", NULL, NULL};
 
 // Entry point of the Content Manager program
 int main(void)
@@ -284,6 +282,7 @@ bool add_contact(Contact** head, Contact** tail)
 	
 	// Add new contact in sorted position
 	add_node_sort(head, tail, buffer_name, buffer_phone, buffer_email);
+	search_list(*head, buffer_name);
 	return true;
 }
 
@@ -314,6 +313,7 @@ bool delete_contact(Contact* contacts)
 {
 	return true;
 }
+
 bool search_contacts(Contact* contacts)
 {
 	char query[MAX_STRING_LENGTH];
@@ -321,26 +321,29 @@ bool search_contacts(Contact* contacts)
 	
 	get_input(query, "Name: ");
 
+	return search_list(contacts, query);
+}
+
+bool search_list(Contact* contacts, char* query)
+{
 	for (Contact* ptr = contacts; ptr != NULL; ptr = ptr->next)
 	{
 		if (strcasecmp(ptr->name, query) == 0)
 		{
-			int name_len = FORMAT_MIN_LENTH;
-			int phone_len = FORMAT_MIN_LENTH;
-			int email_len = FORMAT_MIN_LENTH;
-			name_len = strlen(ptr->name);
-			phone_len = strlen(ptr->phone);
-			email_len = strlen(ptr->email);
-			name_len += LIST_PADDING;
-			phone_len += LIST_PADDING;
-			email_len += LIST_PADDING;
-			int line_len = print_table_header(name_len, phone_len, email_len);
-			print_contact(ptr, name_len, phone_len, email_len);
-			print_line(line_len);
+			print_single_contact(ptr);
 			return true;
 		}
 	}
-	return false;
+}
+
+void print_single_contact(Contact* contact)
+{
+	int name_len = strlen(contact->name);
+	int phone_len = strlen(contact->phone);
+	int email_len = strlen(contact->email);
+	int line_len = print_table_header(name_len, phone_len, email_len);
+	print_contact(contact, name_len, phone_len, email_len);
+	print_line(line_len);
 }
 
 // Displays a formatted table of contacts from a linked list
@@ -348,7 +351,7 @@ void list_contacts(Contact* contacts)
 {
 	int name_max, phone_max, email_max;
 	// Initialize minimum column widths for formatting
-	name_max = phone_max = email_max = FORMAT_MIN_LENTH;
+	name_max = phone_max = email_max = 0;
 
 	// Determine maximum length of each field for column alignment
 	for (Contact* ptr = contacts; ptr != NULL; ptr = ptr->next)
@@ -364,11 +367,6 @@ void list_contacts(Contact* contacts)
 		if (email_len > email_max)
 			email_max = email_len;
 	}
-
-	// Add padding to maximum lengths for better readability
-	name_max += LIST_PADDING;
-	phone_max += LIST_PADDING;
-	email_max += LIST_PADDING;
 	
 	// Print table header and get total line length
 	int line_len = print_table_header(name_max, phone_max, email_max);
@@ -385,12 +383,13 @@ void list_contacts(Contact* contacts)
 // Prints table header with specified column widths and returns total line length
 int print_table_header(int name_len, int phone_len, int email_len)
 {
+	Contact header = { "Name", "Phone", "Email", NULL, NULL };
 	// Calculate total line length including vertical bars and spaces
 	int line_len = name_len + phone_len + email_len + VERTICAL_BARS_IN_TABLE + SPACES_IN_TABLE;
 	// Print top border of the table
 	print_line(line_len);
 	// Print header row with field names, left aligned within their columns
-	printf("| %-*s| %-*s| %-*s|\n", name_len, header.name, phone_len, header.phone, email_len, header.email);
+	print_contact(&header, name_len, phone_len, email_len);
 	// Print separator line below header
 	print_line(line_len);
 	return line_len;
@@ -400,7 +399,7 @@ int print_table_header(int name_len, int phone_len, int email_len)
 void print_contact(Contact* ptr, int name_len, int phone_len, int email_len)
 {
 	// Print contact info with specified field widths, left aligned
-	printf("| %-*s| %-*s| %-*s|\n", name_len, ptr->name, phone_len, ptr->phone, email_len, ptr->email);
+	printf("| %-*s   | %-*s   | %-*s   |\n", name_len, ptr->name, phone_len, ptr->phone, email_len, ptr->email);
 }
 
 // Prints a horizontal line of dashes with the specified length
