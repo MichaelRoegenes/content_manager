@@ -17,3 +17,10 @@ packages/
 
 # User-specific files
 *.csproj.user
+/contacts.txt
+
+*.o
+
+drmemory-windows-installer.msi
+
+content_manager
