@@ -70,3 +70,108 @@ Develop a command-line application called "Contact Manager" that enables users t
 8. **Memory Management:**
     - Dynamically allocate memory for each `name`, `phone`, and `email` string using `malloc`.
     - Free all allocated memory when deleting a contact or exiting the program to prevent memory leaks, reinforcing pointer and memory concepts.
+  
+    - ### Input and Output:
+
+- **User Interaction:**
+    - The program runs via the command line, prompting users for input using `printf` and reading responses with `fgets` (recommended for strings to avoid buffer issues).
+    - Example menu display:
+        
+        ```
+        Contact Manager
+        1. Add contact
+        2. Delete contact
+        3. Search contact
+        4. List all contacts
+        5. Edit contact
+        6. Exit
+        Enter your choice:
+        
+        ```
+        
+- **Sample Inputs and Outputs:**
+    - **Adding a Contact:**
+        
+        ```
+        Enter name: John Doe
+        Enter phone: 123-456-7890
+        Enter email: john@example.com
+        Contact added successfully.
+        
+        ```
+        
+        (If name exists: `Contact already exists.`)
+        
+    - **Listing Contacts:**
+        
+        ```
+        Name: John Doe
+        Phone: 123-456-7890
+        Email: john@example.com
+        ---
+        Name: Jane Smith
+        Phone: 987-654-3210
+        Email: jane@example.com
+        ---
+        
+        ```
+        
+        (If empty: `No contacts found.`)
+        
+    - **Searching for a Contact:**
+        
+        ```
+        Enter name to search: John Doe
+        Name: John Doe
+        Phone: 123-456-7890
+        Email: john@example.com
+        
+        ```
+        
+        (If not found: `Contact not found.`)
+        
+    - **Editing a Contact:**
+        
+        ```
+        Enter name to edit: John Doe
+        Enter new phone (leave blank to keep current): 555-555-5555
+        Enter new email (leave blank to keep current):
+        Contact updated successfully.
+        
+        ```
+        
+
+---
+
+### Constraints:
+
+- Names are **unique** and **case-sensitive** (e.g., "John" and "john" are distinct).
+- The program should support at least 100 contacts without performance issues.
+- The file `"contacts.txt"` uses tab-separated values (e.g., `John Doe\\t123-456-7890\\tjohn@example.com`).
+
+---
+
+### Testing:
+
+Students should test their solution with the following scenarios:
+
+1. **Empty Start:** Run the program with no `"contacts.txt"`, add contacts, list them, and exit. Verify `"contacts.txt"` contains the added contacts.
+2. **Existing File:** Create a `"contacts.txt"` with sample contacts, run the program, and confirm they load correctly. Perform add, delete, and edit operations, then check the updated file.
+3. **Edge Cases:**
+    - Add a contact with an existing name (should fail).
+    - Search/delete/edit a non-existent contact (should indicate "not found").
+    - Enter an empty name (should prompt again or reject).
+    - Enter an invalid menu choice (should re-prompt).
+4. **Memory Safety:** Use a tool like Valgrind (if available) to ensure no memory leaks occur after adding, deleting, and exiting.
+
+---
+
+### Extensions (Optional):
+
+For students seeking additional challenges, consider:
+
+- **Sorting:** Modify the linked list to insert contacts in alphabetical order by name, adapting sorting concepts from week 3.
+- **Extra Fields:** Add fields like `address` or `birthday` to the `Contact` struct, expanding data handling.
+- **Case-Insensitive Search:** Make name searches case-insensitive using string manipulation.
+- **Command-Line Arguments:** Allow direct operations, e.g., `./contacts --add "John Doe" "123-456-7890" "john@example.com"`.
+- **Enhanced Validation:** Implement strict checks for phone numbers (e.g., specific formats) and emails (e.g., contains `@` and `.`).
