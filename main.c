@@ -16,7 +16,12 @@ int main(void)
 	Contact* contacts_head = NULL;
 	Contact* contacts_tail = contacts_head;
 	// Load existing contacts from a file into the list
-	load_file(&contacts_head, &contacts_tail);
+	if (!load_file(&contacts_head, &contacts_tail))
+	{
+		printf("Error loading file\n");
+		return 1;
+	}
+	
 	
 	// Main program loop for user interaction 
 	while (true)
