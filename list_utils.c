@@ -368,7 +368,7 @@ void list_contacts(Contact* contacts)
 }
 
 
-// Edits an existing contanct's details
+// Edits an existing contact's details
 bool edit_contact(Contact* contacts)
 {
 	char buffer_name[MAX_STRING_LENGTH];
@@ -392,7 +392,7 @@ bool edit_contact(Contact* contacts)
 		get_input(buffer_email, "Email: ");
 		if (buffer_phone[0] != '\0')
 		{
-			char* new_phone = malloc(sizeof(char) * strlen(buffer_phone));
+			char* new_phone = malloc(sizeof(char) * (strlen(buffer_phone) + 1));
 			if (new_phone == NULL)
 			{
 				return false;
@@ -405,7 +405,7 @@ bool edit_contact(Contact* contacts)
 		
 		if (buffer_email[0] != '\0')
 		{
-			char* new_email = malloc(sizeof(char) * strlen(buffer_email));
+			char* new_email = malloc(sizeof(char) * (strlen(buffer_email) + 1));
 			if (new_email == NULL)
 			{
 				return false;
