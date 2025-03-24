@@ -5,6 +5,8 @@
 #include <stdbool.h>
 #include <string.h>
 
+
+// Prints a single contact's details
 void print_single_contact(Contact* contact)
 {
 	int name_len = strlen(contact->name);

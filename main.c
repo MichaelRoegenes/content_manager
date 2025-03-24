@@ -1,5 +1,12 @@
-#include <stdio.h>
+/*
+ * Contact Manager: A command-line tool to manage contacts.
+ * Features: Add, delete, search, list, and edit contacts.
+ * Stores data in "contacts.txt" (format: name\tphone\temail).
+ * Usage: Run and select options 1-6 from the menu.
+ */
+
 #include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -43,7 +50,6 @@ int main(void)
 		int menu_selection = 0;
 		// Wait for valid input (characters '1' to '6')
 		while ((menu_selection = getchar()) < '1' || menu_selection > '6'); 
-		// Empty loop body; continues until valid input is received
 		
 		// Execute corresponding action based on user selection
 		if (menu_selection == '1')
