@@ -185,11 +185,17 @@ bool add_contact(Contact** head, Contact** tail)
 
 	// Prompt and store input
 	get_input(buffer_name, "Name: ");
+	if (search_list(*head, buffer_name) != NULL)
+	{
+		printf("Name already in contacts\n");
+		return false;
+	}
 	get_input(buffer_phone, "Phone: ");
 	get_input(buffer_email, "Email: ");
 
 	// Add new contact in sorted position
 	add_node_sort(head, tail, buffer_name, buffer_phone, buffer_email);
+	printf("Added contact");
 	search_list(*head, buffer_name);
 	return true;
 }
@@ -229,19 +235,28 @@ bool search_contacts(Contact* contacts)
 
 	get_input(query, "Name: ");
 
-	return search_list(contacts, query);
+ 
+	if (search_list(contacts, query) == NULL)
+	{
+		return false;
+	}
+	else
+	{
+		return true;
+	}
 }
 
-bool search_list(Contact* contacts, char* query)
+Contact* search_list(Contact* contacts, char* query)
 {
 	for (Contact* ptr = contacts; ptr != NULL; ptr = ptr->next)
 	{
 		if (strcasecmp(ptr->name, query) == 0)
 		{
 			print_single_contact(ptr);
-			return true;
+			return ptr;
 		}
 	}
+	return NULL;
 }
 
 // Displays a formatted table of contacts from a linked list
@@ -281,7 +296,53 @@ void list_contacts(Contact* contacts)
 
 bool edit_contact(Contact* contacts)
 {
-	return true;
+	char buffer_name[MAX_STRING_LENGTH];
+	
+	clear_input_buffer();
+
+	get_input(buffer_name, "Name: ");
+	Contact* ptr = search_list(contacts, buffer_name);
+
+	if (ptr == NULL)
+	{
+		printf("Name not found");
+		return false;
+	}
+	else
+	{
+		char buffer_phone[MAX_STRING_LENGTH];
+		char buffer_email[MAX_STRING_LENGTH];
+
+		get_input(buffer_phone, "Phone: ");
+		get_input(buffer_email, "Email: ");
+		if (buffer_phone[0] != '\0')
+		{
+			char* new_phone = malloc(sizeof(char) * strlen(buffer_phone));
+			if (new_phone == NULL)
+			{
+				return false;
+			}
+			strcpy(new_phone, buffer_phone);
+			char* tmp_phone = ptr->phone;
+			ptr->phone = new_phone;
+			free(tmp_phone);
+		}
+		
+		if (buffer_email[0] != '\0')
+		{
+			char* new_email = malloc(sizeof(char) * strlen(buffer_email));
+			if (new_email == NULL)
+			{
+				return false;
+			}
+			strcpy(new_email, buffer_email);
+			char* tmp_email = ptr->email;
+			ptr->email = new_email;
+			free(tmp_email);
+		}
+		search_list(contacts, buffer_name);
+		return true;
+	}
 }
 
 bool save_file(Contact* contacts)

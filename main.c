@@ -11,7 +11,7 @@ int main(void)
 {
 	// Display program title with decorative borders
 	printf("------------------------\n"
-		   "|  Content Manager     |\n");
+		   "|   Content Manager    |\n");
 	// Initialize an empty linked list of contacts
 	Contact* contacts_head = NULL;
 	Contact* contacts_tail = contacts_head;

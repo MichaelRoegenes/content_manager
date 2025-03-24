@@ -22,7 +22,7 @@ void clear_input_buffer(void);
 bool get_input(char* str, char* prompt);
 bool delete_contact(Contact* contacts);
 bool search_contacts(Contact* contacts);
-bool search_list(Contact* contacts, char* query);
+Contact* search_list(Contact* contacts, char* query);
 void list_contacts(Contact* contacts);
 bool edit_contact(Contact* contacts);
 bool save_file(Contact* contacts);
