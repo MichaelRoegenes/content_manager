@@ -58,7 +58,15 @@ bool load_file(Contact** head, Contact** tail)
 		index = extract_string(buffer_phone, buffer, index);
 		index = extract_string(buffer_email, buffer, index);
 		// Add extracted data as a new sorted node in the list
-		add_node_sort(head, tail, buffer_name, buffer_phone, buffer_email);
+		if (!add_node_sort(head, tail, buffer_name, buffer_phone, buffer_email))
+		{
+			fclose(input_file);
+			free(buffer);
+			free(buffer_name);
+			free(buffer_phone);
+			free(buffer_email);
+			return false;
+		}
 	}
 	// Clean up allocated memory and close the file
 	free(buffer);
@@ -195,10 +203,17 @@ bool add_contact(Contact** head, Contact** tail)
 	get_input(buffer_email, "Email: ");
 
 	// Add new contact in sorted position
-	add_node_sort(head, tail, buffer_name, buffer_phone, buffer_email);
-	printf("Added contact");
-	search_list(*head, buffer_name);
-	return true;
+	if (add_node_sort(head, tail, buffer_name, buffer_phone, buffer_email))
+	{
+		printf("Successfully added contact\n");
+		search_list(*head, buffer_name);
+		return true;
+	}
+	else
+	{
+		printf("Error adding contact\n");
+		return false;
+	}
 }
 
 // Clears the input buffer of any remaining characters
@@ -271,6 +286,15 @@ bool delete_contact(Contact** head, Contact** tail)
 			free(ptr->email);
 			free(ptr);
 		}
+	}
+	if (search_list(*head, buffer_name) != NULL)
+	{
+		printf("Error deleting contact\n");
+		return false;
+	}
+	else
+	{
+		printf("Successfully deleted contact\n");
 	}
 	return true;
 }
