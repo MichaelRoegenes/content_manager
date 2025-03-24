@@ -46,7 +46,7 @@ int main(void)
 			add_contact(&contacts_head, &contacts_tail);
 		else if (menu_selection == '2')
 			// Remove a contact from the list
-			delete_contact(contacts_head);
+			delete_contact(&contacts_head, &contacts_tail);
 		else if (menu_selection == '3')
 			// Search for a contact in the list
 			search_contacts(contacts_head);

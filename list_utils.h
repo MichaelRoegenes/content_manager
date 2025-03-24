@@ -20,7 +20,7 @@ bool add_node_sort(Contact** head, Contact** tail, char* name, char* phone, char
 bool add_contact(Contact** head, Contact** tail);
 void clear_input_buffer(void);
 bool get_input(char* str, char* prompt);
-bool delete_contact(Contact* contacts);
+bool delete_contact(Contact** head, Contact** tail);
 bool search_contacts(Contact* contacts);
 Contact* search_list(Contact* contacts, char* query);
 void list_contacts(Contact* contacts);

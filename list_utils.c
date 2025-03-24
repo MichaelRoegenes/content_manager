@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "list_utils.h"
 #include "output_utils.h"
@@ -223,11 +224,58 @@ bool get_input(char* str, char* prompt)
 	return true;
 }
 
-bool delete_contact(Contact* contacts)
+// Deletes a contact from the list
+bool delete_contact(Contact** head, Contact** tail)
 {
+	char buffer_name[MAX_STRING_LENGTH];
+
+	clear_input_buffer();
+	
+	get_input(buffer_name, "Name: ");
+
+	Contact* ptr = search_list(*head, buffer_name);
+	if (ptr == NULL)
+	{
+		printf("Contact not found");
+		return false;
+	}
+	char answer[MAX_STRING_LENGTH];
+	get_input(answer, "Are you sure you want to delete this contact? [Y/N] ");
+
+	if (toupper(answer[0]) == 'Y')
+	{
+		if (ptr->prev == NULL)
+		{
+			*head = ptr->next;
+			ptr->next->prev = NULL;
+			free(ptr->name);
+			free(ptr->phone);
+			free(ptr->email);
+			free(ptr);
+		}
+		else if (ptr->next == NULL)
+		{
+			*tail = ptr->prev;
+			ptr->prev->next = NULL;
+			free(ptr->name);
+			free(ptr->phone);
+			free(ptr->email);
+			free(ptr);
+		}
+		else
+		{
+			ptr->prev->next = ptr->next;
+			ptr->next->prev = ptr->prev;
+			free(ptr->name);
+			free(ptr->phone);
+			free(ptr->email);
+			free(ptr);
+		}
+	}
 	return true;
 }
 
+// Searches for a contact by name
 bool search_contacts(Contact* contacts)
 {
 	char query[MAX_STRING_LENGTH];
@@ -238,6 +286,7 @@ bool search_contacts(Contact* contacts)
  
 	if (search_list(contacts, query) == NULL)
 	{
+		printf("Contact not found");
 		return false;
 	}
 	else
@@ -246,6 +295,7 @@ bool search_contacts(Contact* contacts)
 	}
 }
 
+// Searches the list for a contact by name
 Contact* search_list(Contact* contacts, char* query)
 {
 	for (Contact* ptr = contacts; ptr != NULL; ptr = ptr->next)
@@ -294,6 +344,7 @@ void list_contacts(Contact* contacts)
 }
 
 
+// Edits an existing contanct's details
 bool edit_contact(Contact* contacts)
 {
 	char buffer_name[MAX_STRING_LENGTH];
@@ -345,6 +396,7 @@ bool edit_contact(Contact* contacts)
 	}
 }
 
+// Saves the contact list to a file
 bool save_file(Contact* contacts)
 {
 	FILE* output_file = fopen(FILENAME, "w");
@@ -360,6 +412,7 @@ bool save_file(Contact* contacts)
 	return true;
 }
 
+// Frees the memory allocated for the contact list
 bool free_memory(Contact* contacts)
 {
 	Contact* ptr = contacts;
